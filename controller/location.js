@@ -1,7 +1,7 @@
 'use strict'
 let Location = require('../models/location');
 
-const add = async (req, res) => {
+const create = async (req, res) => {
     let body = req.body;
     await Location.create({
         location_name: body.location_name,
@@ -9,6 +9,36 @@ const add = async (req, res) => {
         Longitude: body.Longitude
     })
         .then(data => (res.json(data)))
+        .catch(err => res.status(400).json(err))
+}
+
+const add = async (req, res) => {
+    let Id = req.params.id;
+    let body = req.body;
+    await Location.findOne({
+        where: {
+            id: Id
+        }
+    })
+        .then(data => {
+            if (!data) {
+                return res.json("Location not found");
+            }
+            else {
+                Location.update({
+                    nearest_location: body.nearest_location,
+                }, {
+                    where: {
+                        id: Id
+                    }
+                })
+            }
+        })
+        .then(Location.findOne({
+            where: {
+                id: Id
+            }
+        }).then(data => (res.json(data))))
         .catch(err => res.status(400).json(err))
 }
 
@@ -44,12 +74,12 @@ const update = async (req, res) => {
             id: Id
         }
     })
-        .then(data => {
+        .then(async data => {
             if (!data) {
                 return res.json("Location not found");
             }
             else {
-                Location.update({
+                await Location.update({
                     location_name: body.location_name,
                     Latitude: body.Latitude,
                     Longitude: body.Longitude
@@ -59,9 +89,12 @@ const update = async (req, res) => {
                     }
                 })
             }
-        })
-        .then(res.json('data was update'))
-        .catch(err => res.status(400).json(err))
+        }).catch(err => res.status(400).json(err))
+    Location.findOne({
+        where: {
+            id: Id
+        }
+    }).then(data => (res.json(data)))
 }
 
 const deleted = async (req, res) => {
@@ -83,6 +116,7 @@ const deleted = async (req, res) => {
 }
 
 module.exports = {
+    create,
     getAll,
     find,
     add,

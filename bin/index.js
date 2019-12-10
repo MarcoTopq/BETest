@@ -1,10 +1,10 @@
 var Sequelize = require('sequelize');
 
 var db = new Sequelize({
-  database: 'travelin', 
-  username: 'root', 
-  password: '',
-  host: 'localhost',
+  database: 'sql12315124', 
+  username: 'sql12315124', 
+  password: '68sXMBDQmd',
+  host: 'sql12.freemysqlhosting.net',
   port: 3306,
   dialect: 'mysql',
   operatorsAliases: false,
